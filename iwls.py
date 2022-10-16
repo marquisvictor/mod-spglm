@@ -5,9 +5,7 @@ from scipy import sparse as sp
 from scipy.sparse import linalg as spla
 from spreg.utils import spdot, spmultiply
 from .family import Binomial, Poisson
-from sklearn.preprocessing import StandardScaler
 
-import pandas as pd
 
 
 def _compute_betas(y, x):
@@ -36,7 +34,6 @@ def _compute_betas_gwr(y, x, lwcc, wi):
     Geographically weighted regression: the analysis of spatially varying relationships.
     """
 
-    scaler = StandardScaler()
 
     if lwcc == True:
          # Weight before standardization routine
@@ -44,8 +41,8 @@ def _compute_betas_gwr(y, x, lwcc, wi):
         xw = x*wi
         yw = y*wi
 
-        xw_std = scaler.fit_transform(xw)
-        y_std = scaler.fit_transform(yw)
+        xw_std = (xw - xw.mean(axis=0)) / xw.std(axis=0)
+        y_std = (yw - yw.mean(axis=0)) / yw.std(axis=0)
 
         xtw = xw.T
         xtx = np.dot(xtw, xw_std)
