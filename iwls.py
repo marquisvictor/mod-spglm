@@ -27,7 +27,7 @@ def _compute_betas(y, x):
     return betas
 
 
-def _compute_betas_gwr(y, x, wi):
+def _compute_betas_gwr(y, x, lwcc, wi):
     """
     compute MLE coefficients using iwls routine
 
@@ -38,14 +38,8 @@ def _compute_betas_gwr(y, x, wi):
 
     scaler = StandardScaler()
 
-    if x.shape[1] > 1:
-        xT = (x * wi).T  
-        xtx = np.dot(xT, x)
-        xtx_inv_xt = linalg.solve(xtx, xT)
-        betas = np.dot(xtx_inv_xt, y)
-        return betas, xtx_inv_xt
-    else:
-        # Weight before standardization routine
+    if lwcc == True:
+         # Weight before standardization routine
 
         xw = x*wi
         yw = y*wi
@@ -57,7 +51,35 @@ def _compute_betas_gwr(y, x, wi):
         xtx = np.dot(xtw, xw_std)
         xtx_inv_xt = linalg.solve(xtx, xtw)
         betas = np.dot(xtx_inv_xt, y_std)
+        return betas, xtx_inv_xt          
+
+    else:
+        xT = (x * wi).T  
+        xtx = np.dot(xT, x)
+        xtx_inv_xt = linalg.solve(xtx, xT)
+        betas = np.dot(xtx_inv_xt, y)
         return betas, xtx_inv_xt
+
+    # if x.shape[1] > 1:
+    #     xT = (x * wi).T  
+    #     xtx = np.dot(xT, x)
+    #     xtx_inv_xt = linalg.solve(xtx, xT)
+    #     betas = np.dot(xtx_inv_xt, y)
+    #     return betas, xtx_inv_xt
+    # else:
+    #     # Weight before standardization routine
+
+    #     xw = x*wi
+    #     yw = y*wi
+
+    #     xw_std = scaler.fit_transform(xw)
+    #     y_std = scaler.fit_transform(yw)
+
+    #     xtw = xw.T
+    #     xtx = np.dot(xtw, xw_std)
+    #     xtx_inv_xt = linalg.solve(xtx, xtw)
+    #     betas = np.dot(xtx_inv_xt, y_std)
+    #     return betas, xtx_inv_xt
 
 
 def iwls(y, x, family, offset, y_fix,
