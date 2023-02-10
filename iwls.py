@@ -41,6 +41,8 @@ def _compute_betas_gwr(y, x, lwcc, wi):
         xw = x*wi
         yw = y*wi
 
+        # print('I was used.')
+
         xw_std = (xw - xw.mean(axis=0)) / xw.std(axis=0)
         y_std = (yw - yw.mean(axis=0)) / yw.std(axis=0)
 
@@ -51,6 +53,7 @@ def _compute_betas_gwr(y, x, lwcc, wi):
         return betas, xtx_inv_xt          
 
     else:
+        # print('Old routine')
         xT = (x * wi).T  
         xtx = np.dot(xT, x)
         xtx_inv_xt = linalg.solve(xtx, xT)
